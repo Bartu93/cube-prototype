@@ -33,6 +33,12 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void Awake()
+    {
+        if (_ins == null)
+            _ins = this;
+    }
+
     void Start()
     {
         parent = this.transform;     

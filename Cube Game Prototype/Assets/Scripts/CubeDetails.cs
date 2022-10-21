@@ -17,11 +17,14 @@ public class CubeDetails : MonoBehaviour
 
     public void MoveToDeck()
     {
+        Deck.ins.CheckAvailability();
 
-        if(Deck.ins.deckhasavailablespace == true && sentToDeck == false)
+        if (Deck.ins.deckhasavailablespace == true && sentToDeck == false)
         {
             Deck.ins.cubesInDeck.Add(gameObject);
             Deck.ins.SortDeckCubes();
+            Deck.ins.SortVisualDeck();
+            Deck.ins.CheckMatchingCubes();
             transform.SetParent(Deck.ins.transform);
             sentToDeck = true;
         }

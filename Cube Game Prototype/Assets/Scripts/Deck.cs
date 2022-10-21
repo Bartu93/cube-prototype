@@ -38,7 +38,6 @@ public class Deck : MonoBehaviour
         {
             deckhasavailablespace = false;
         }
-        SortDeckCubes();
     }
     private static int CompareListByID(GameObject i1, GameObject i2)
     {
@@ -48,7 +47,7 @@ public class Deck : MonoBehaviour
     public void SortDeckCubes()
     {
         cubesInDeck.Sort(CompareListByID);
-        SortVisualDeck();
+        
     }
 
     public void SortVisualDeck()
@@ -60,7 +59,7 @@ public class Deck : MonoBehaviour
             item.transform.DOScale(1.2f,1f);
             item.transform.DORotate(Vector3.zero,1f);
         }
-        CheckMatchingCubes();
+        
     }
 
     public void CheckMatchingCubes()
@@ -108,5 +107,7 @@ public class Deck : MonoBehaviour
         matchingList.Clear();
         GameManager.ins.totalCubeNumber -= 3;
         CheckAvailability();
+        SortDeckCubes();
+        SortVisualDeck();
     }
 }
