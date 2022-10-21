@@ -2,13 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShapeCreator : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public GameObject spawnPrefab;
     public GameObject rotatorPrefab;
     public Transform parent;
     
-    public List<Cube> cubes;
+    public List<Cube> cubeScriptableObjects;
     public List<GameObject> cubeGameObjects;
     public List<Vector3> spawnablePositions;
 
@@ -23,6 +23,15 @@ public class ShapeCreator : MonoBehaviour
     
 
     Vector3 spawnPos;
+
+    private static GameManager _ins;
+    public static GameManager ins
+    {
+        get
+        {
+            return _ins;
+        }
+    }
 
     void Start()
     {
@@ -123,7 +132,6 @@ public class ShapeCreator : MonoBehaviour
 
     public void InstantiateCubesRandomly()
     {
-            
         for (int i = 0; i < maxCubeNumber; i++)
             {
                 if (totalCubeNumber < maxCubeNumber)
@@ -138,5 +146,42 @@ public class ShapeCreator : MonoBehaviour
             }
        
         OffsetInstantiationPosition();
+
+        AssignCubes();
+    }
+
+    public void AssignCubes()
+    {
+        int cubeMatchingNumber = 3;
+        int cubeSOIndex = 0;
+        int matchedCubeNumber = 0;
+        int cubeGOCount = cubeGameObjects.Count;
+
+        for (int i = 0; i < cubeGOCount; i++)
+        {
+            if (cubeSOIndex > cubeScriptableObjects.Count - 1)
+            {
+                cubeSOIndex = 0;
+                Debug.Log("Tried 0 SO");
+            }
+            Debug.Log(cubeSOIndex);
+            Cube cubeSO = cubeScriptableObjects[cubeSOIndex];
+            int randomNumber = Random.Range(0, cubeGameObjects.Count);
+            GameObject selectedCube = cubeGameObjects[randomNumber];
+            selectedCube.GetComponent<MeshRenderer>().material.mainTexture = cubeSO.texture;
+            selectedCube.name = cubeSO.cubeID.ToString();
+            selectedCube.GetComponent<CubeDetails>().cubeID = cubeSO.cubeID;
+            cubeGameObjects.Remove(selectedCube);
+            matchedCubeNumber++;
+
+            if(matchedCubeNumber == cubeMatchingNumber)
+            {
+                cubeSOIndex++;
+                
+                
+
+                matchedCubeNumber = 0;
+            }
+        }
     }
 }
