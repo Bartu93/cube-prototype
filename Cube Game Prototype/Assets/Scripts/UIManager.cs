@@ -77,4 +77,9 @@ public class UIManager : MonoBehaviour
         starSpawnPos.z = 0;
         Instantiate(starPrefab, starSpawnPos, Quaternion.identity,gameObject.transform);
     }
+
+    public void UndoPowerUpButtonPressed()
+    {
+        Deck.ins.UndoPowerUp();
+    }
 }

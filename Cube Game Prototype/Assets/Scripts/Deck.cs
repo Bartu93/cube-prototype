@@ -56,8 +56,8 @@ public class Deck : MonoBehaviour
         {
             int index = cubesInDeck.IndexOf(item);
             item.transform.DOMove(transforms[index].transform.position, .5f);
-            item.transform.DOScale(1.2f,1f);
-            item.transform.DORotate(Vector3.zero,1f);
+            item.transform.DOScale(1.2f,.5f);
+            item.transform.DORotate(Vector3.zero,.5f);
         }
         
     }
@@ -110,5 +110,12 @@ public class Deck : MonoBehaviour
         SortDeckCubes();
         SortVisualDeck();
         UIManager.ins.OnCubesMatched();
+    }
+
+    public void UndoPowerUp()
+    {
+        GameObject obj = cubesInDeck[cubesInDeck.Count-1];
+        cubesInDeck.Remove(obj);
+        obj.GetComponent<CubeDetails>().MoveBackToPosition();
     }
 }

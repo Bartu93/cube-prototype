@@ -9,7 +9,8 @@ public class GameManager : MonoBehaviour
     public Transform parent;
     
     public List<Cube> cubeScriptableObjects;
-    public List<GameObject> cubeGameObjects;
+    public List<GameObject> unassignedCubes;
+    public List<GameObject> assignedCubes;
     public List<Vector3> spawnablePositions;
 
     public float xMaxValue;
@@ -59,7 +60,7 @@ public class GameManager : MonoBehaviour
             foreach (var item in spawnablePositions)
             {
                 GameObject obj = Instantiate(spawnPrefab, item, Quaternion.identity,parent.transform);
-                cubeGameObjects.Add(obj);
+                unassignedCubes.Add(obj);
             }
         }
 
@@ -94,19 +95,19 @@ public class GameManager : MonoBehaviour
         var totalX = 0f;
         var totalY = 0f;
         var totalZ = 0f;
-        foreach (var item in cubeGameObjects)
+        foreach (var item in unassignedCubes)
         {
             totalX += item.transform.position.x;
             totalY += item.transform.position.y;
             totalZ += item.transform.position.z;
         }
-        var centerX = totalX / cubeGameObjects.Count;
-        var centerY = totalY / cubeGameObjects.Count;
-        var centerZ = totalZ / cubeGameObjects.Count;
+        var centerX = totalX / unassignedCubes.Count;
+        var centerY = totalY / unassignedCubes.Count;
+        var centerZ = totalZ / unassignedCubes.Count;
 
         //Spawns a rotator at the centre of all cubes
         GameObject rotator = Instantiate(rotatorPrefab, new Vector3(centerX, centerY, centerZ), Quaternion.identity);
-        foreach (var item in cubeGameObjects)
+        foreach (var item in unassignedCubes)
         {
             item.transform.SetParent(rotator.transform);
         }
@@ -148,7 +149,7 @@ public class GameManager : MonoBehaviour
                     int randomNumber = Random.Range(0, spawnablePositions.Count);
                     Vector3 spawnpos = spawnablePositions[randomNumber];
                     GameObject cube = Instantiate(spawnPrefab, spawnpos, Quaternion.identity, parent.transform);
-                    cubeGameObjects.Add(cube);
+                    unassignedCubes.Add(cube);
                     totalCubeNumber++;
                     spawnablePositions.Remove(spawnpos);
                 } 
@@ -164,23 +165,22 @@ public class GameManager : MonoBehaviour
         int cubeMatchingNumber = 3;
         int cubeSOIndex = 0;
         int matchedCubeNumber = 0;
-        int cubeGOCount = cubeGameObjects.Count;
+        int cubeGOCount = unassignedCubes.Count;
 
         for (int i = 0; i < cubeGOCount; i++)
         {
             if (cubeSOIndex > cubeScriptableObjects.Count - 1)
             {
                 cubeSOIndex = 0;
-                Debug.Log("Tried 0 SO");
             }
-            Debug.Log(cubeSOIndex);
             Cube cubeSO = cubeScriptableObjects[cubeSOIndex];
-            int randomNumber = Random.Range(0, cubeGameObjects.Count);
-            GameObject selectedCube = cubeGameObjects[randomNumber];
+            int randomNumber = Random.Range(0, unassignedCubes.Count);
+            GameObject selectedCube = unassignedCubes[randomNumber];
             selectedCube.GetComponent<MeshRenderer>().material.mainTexture = cubeSO.texture;
             selectedCube.name = cubeSO.cubeID.ToString();
             selectedCube.GetComponent<CubeDetails>().cubeID = cubeSO.cubeID;
-            cubeGameObjects.Remove(selectedCube);
+            unassignedCubes.Remove(selectedCube);
+            assignedCubes.Add(selectedCube);
             matchedCubeNumber++;
 
             if(matchedCubeNumber == cubeMatchingNumber)

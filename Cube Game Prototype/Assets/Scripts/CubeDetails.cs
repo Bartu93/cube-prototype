@@ -9,6 +9,7 @@ public class CubeDetails : MonoBehaviour
     public int cubeID;
     public bool sentToDeck;
     Transform parent;
+    Vector3 previousrotation;
 
     private void Awake()
     {
@@ -33,21 +34,31 @@ public class CubeDetails : MonoBehaviour
     IEnumerator GetPositionAndParentDelay()
     {
         yield return new WaitForSeconds(.5f);
-        previousPosition = transform.position;
+        previousPosition = transform.localPosition;
         parent = transform.parent;
+        previousrotation = transform.localRotation.eulerAngles;
     }
 
     public void MoveBackToPosition()
     {
-        transform.DOMove(previousPosition, 1f);
+        SetParent();
+        transform.DOLocalMove(previousPosition, .2f);
         sentToDeck = false;
-        transform.DOScale(1f, 1f);
+        transform.DOScale(1f, .2f);
+        transform.DOLocalRotate(previousrotation, .2f);
+        SetParent();
+
+    }
+
+    void SetParent()
+    {
         transform.SetParent(parent);
     }
 
     public void DestroyCube()
     {
         transform.DOScale(0, .6f);
+        GameManager.ins.assignedCubes.Remove(gameObject);
         Destroy(gameObject, 1f);
     }
 }
