@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     public int maxCubeNumber;
 
     public bool debugMode;
+
+    public int undoPowerUpCount;
+    public int hintPowerUpCount;
     
 
     Vector3 spawnPos;

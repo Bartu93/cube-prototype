@@ -109,5 +109,6 @@ public class Deck : MonoBehaviour
         CheckAvailability();
         SortDeckCubes();
         SortVisualDeck();
+        UIManager.ins.OnCubesMatched();
     }
 }
