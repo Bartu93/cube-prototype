@@ -82,4 +82,9 @@ public class UIManager : MonoBehaviour
     {
         Deck.ins.UndoPowerUp();
     }
+
+    public void HintPowerUpButtonPressed()
+    {
+        Deck.ins.HintPowerUp();
+    }
 }

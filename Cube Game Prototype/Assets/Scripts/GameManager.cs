@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
     public List<GameObject> assignedCubes;
     public List<Vector3> spawnablePositions;
 
-    public float xMaxValue;
+    public int xMaxValue;
     public int yMaxValue;
     public int zMaxValue;
 
@@ -24,6 +24,9 @@ public class GameManager : MonoBehaviour
 
     public int undoPowerUpCount;
     public int hintPowerUpCount;
+
+    public List<Level> levelScriptableObjects;
+    public int levelNo;
     
 
     Vector3 spawnPos;
@@ -45,23 +48,24 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        parent = this.transform;     
+        parent = this.transform;
+
+        InitLevel();
+    }
+
+    void InitLevel()
+    {
+        Level levelSO = levelScriptableObjects[levelNo];
+        xMaxValue = levelSO.xMaxValue;
+        yMaxValue = levelSO.yMaxValue;
+        zMaxValue = levelSO.zMaxValue;
+        maxCubeNumber = levelSO.maxCubeNumber;
         
         for (int y = 0; y < yMaxValue; y++)
         {
             //Calculates all available X & Z positions on the same Y axis then moves to the next Y axis if there is none left
             CalculateXZAxis();
             spawnPos.y++;
-        }
-
-        //For debugging purposes
-        if (debugMode)
-        {
-            foreach (var item in spawnablePositions)
-            {
-                GameObject obj = Instantiate(spawnPrefab, item, Quaternion.identity,parent.transform);
-                unassignedCubes.Add(obj);
-            }
         }
 
         InstantiateCubesRandomly();
@@ -192,5 +196,19 @@ public class GameManager : MonoBehaviour
                 matchedCubeNumber = 0;
             }
         }
+        Deck.ins.AvailableCubesForHint = assignedCubes;
+    }
+
+    public void OnLevelCompleted()
+    {
+        levelNo++;
+        if(levelNo > levelScriptableObjects.Count - 1)
+        {
+            Debug.Log("Game Ended");
+        }
+        unassignedCubes.Clear();
+        assignedCubes.Clear();
+        spawnablePositions.Clear();
+        InitLevel();
     }
 }

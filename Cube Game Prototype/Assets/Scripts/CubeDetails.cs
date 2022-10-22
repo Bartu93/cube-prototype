@@ -47,7 +47,6 @@ public class CubeDetails : MonoBehaviour
         transform.DOScale(1f, .2f);
         transform.DOLocalRotate(previousrotation, .2f);
         SetParent();
-
     }
 
     void SetParent()
@@ -59,6 +58,7 @@ public class CubeDetails : MonoBehaviour
     {
         transform.DOScale(0, .6f);
         GameManager.ins.assignedCubes.Remove(gameObject);
+        GameManager.ins.totalCubeNumber--;
         Destroy(gameObject, 1f);
     }
 }

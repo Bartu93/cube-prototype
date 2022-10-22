@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class RotateObject : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class RotateObject : MonoBehaviour
     private void Start()
     {
         mainCamera = Camera.main;
+        transform.DOMove(new Vector3(0, 0, 2),1f);
     }
 
     void Update()
@@ -66,7 +68,6 @@ public class RotateObject : MonoBehaviour
                         //if ((Input.mousePosition - mPrevPos).normalized.sqrMagnitude < 1f)
                         {
                             hit.transform.GetComponent<CubeDetails>().MoveToDeck();
-                            Debug.Log("Move to Deck " + transform.name);
                         }
                     }
                 }
