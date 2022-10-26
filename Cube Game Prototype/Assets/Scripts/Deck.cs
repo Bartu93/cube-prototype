@@ -58,6 +58,7 @@ public class Deck : MonoBehaviour
             item.transform.DOMove(transforms[index].transform.position, .3f);
             item.transform.DOScale(1.2f,.3f);
             item.transform.DORotate(Vector3.zero,.3f);
+            AvailableCubesForHint.Remove(item);
         }
         
     }
@@ -123,6 +124,7 @@ public class Deck : MonoBehaviour
         }
         GameObject obj = cubesInDeck[cubesInDeck.Count-1];
         cubesInDeck.Remove(obj);
+        AvailableCubesForHint.Add(obj);
         obj.GetComponent<CubeDetails>().MoveBackToPosition();
     }
 
@@ -130,96 +132,69 @@ public class Deck : MonoBehaviour
     {
         AvailableCubesForHint.Sort(CompareListByID);
 
-        if (cubesInDeck.Count == 2)
+        if (cubesInDeck.Count >= 1)
         {
+            if(cubesInDeck.Count == transforms.Count - 1)
+            {
+                GameObject obj = cubesInDeck[cubesInDeck.Count - 1];
+                cubesInDeck.Remove(obj);
+                AvailableCubesForHint.Add(obj);
+                obj.GetComponent<CubeDetails>().MoveBackToPosition();
+            }
             int cubeID = cubesInDeck[cubesInDeck.Count - 1].GetComponent<CubeDetails>().cubeID;
-            Debug.Log(cubeID);
-            SortAvailableHintCubes(0, cubeID, 2);
-        }
-        else if (cubesInDeck.Count == 1)
-        {
-            int cubeID = cubesInDeck[cubesInDeck.Count - 1].GetComponent<CubeDetails>().cubeID;
-            Debug.Log(cubeID);
-            SortAvailableHintCubes(0, cubeID, 2);
+            DeckHasCubesForHintPowerUp(cubeID);
         }
         else if (cubesInDeck.Count == 0)
         {
-            SortAvailableHintCubes(0,1,3);
+            int cubeID = AvailableCubesForHint[0].GetComponent<CubeDetails>().cubeID;
+            DeckHasCubesForHintPowerUp(cubeID);
         }
     }
 
-    void SortAvailableHintCubes(int index, int cubeID, int countNumber)
+    void DeckHasCubesForHintPowerUp(int cubeID)
     {
-        if (AvailableCubesForHint.Count > 2)
+        int count = 0;
+        for (int i = 0; i < cubesInDeck.Count; i++)
         {
-            //var cubeID = AvailableCubesForHint[index].GetComponent<CubeDetails>().cubeID;
-
-
-            var count = 1;
-            for (int i = 1; i < AvailableCubesForHint.Count; i++)
+            if (cubesInDeck[i].GetComponent<CubeDetails>().cubeID == cubeID)
             {
-                if (AvailableCubesForHint[i].GetComponent<CubeDetails>().cubeID == cubeID)
-                {
-                    count++;
-                    if(count == countNumber)
-                    {
-                        switch (countNumber)
-                        {
-                            case 3:
-                                AvailableCubesForHint[i].GetComponent<CubeDetails>().MoveToDeck();
-                                AvailableCubesForHint.Remove(AvailableCubesForHint[i]);
-                                AvailableCubesForHint[i - 1].GetComponent<CubeDetails>().MoveToDeck();
-                                AvailableCubesForHint.Remove(AvailableCubesForHint[i - 1]);
-                                AvailableCubesForHint[i - 2].GetComponent<CubeDetails>().MoveToDeck();
-                                AvailableCubesForHint.Remove(AvailableCubesForHint[i - 2]);
-                                break;
-
-                            //case 2:
-                            //    AvailableCubesForHint[i].GetComponent<CubeDetails>().MoveToDeck();
-                            //    AvailableCubesForHint.Remove(AvailableCubesForHint[i]);
-                            //    AvailableCubesForHint[i - 1].GetComponent<CubeDetails>().MoveToDeck();
-                            //    AvailableCubesForHint.Remove(AvailableCubesForHint[i - 1]);
-                            //    break;
-
-                            //case 1:
-                            //    AvailableCubesForHint[i].GetComponent<CubeDetails>().MoveToDeck();
-                            //    AvailableCubesForHint.Remove(AvailableCubesForHint[i]);
-                            //    break;
-                        }
-                        break;
-                    }
-                    
-
-                    
-
-
-
-                    //if (count == countNumber)
-                    //{
-                        
-                    //    //StartCoroutine(RemoveMatchingCubes());
-                    //}
-
-                    //if (count == countNumber)
-                    //{
-                    //    AvailableCubesForHint[i].GetComponent<CubeDetails>().MoveToDeck();
-                    //    AvailableCubesForHint.Remove(AvailableCubesForHint[i]);
-                    //    AvailableCubesForHint[i - 1].GetComponent<CubeDetails>().MoveToDeck();
-                    //    AvailableCubesForHint.Remove(AvailableCubesForHint[i - 1]);
-                    //    break;
-                    //    //StartCoroutine(RemoveMatchingCubes());
-                    //}
-
-                    
-                }
-                else
-                {
-                    cubeID = AvailableCubesForHint[i].GetComponent<CubeDetails>().cubeID;
-                    count = 1;
-                }
-
+                count++;
             }
         }
+        
+        count = 3 - count;
+        SendCubesToDeckForHintPowerUp(count, cubeID);
+        count = 0;
     }
 
+    void SendCubesToDeckForHintPowerUp(int count, int cubeID)
+    {
+        GameObject availableHintCube;
+        int i = 0;
+        Debug.Log("initial i = " + i);
+        Debug.Log("count = " + count);
+        List<GameObject> cubesToBeSentToDeck = new List<GameObject>();
+
+        for (int e = 0; e < AvailableCubesForHint.Count; e++)
+        {
+            if (AvailableCubesForHint[e].GetComponent<CubeDetails>().cubeID == cubeID)
+            {
+                if (i < count)
+                {
+                    availableHintCube = AvailableCubesForHint[e];
+                    cubesToBeSentToDeck.Add(availableHintCube);
+                    i++;
+                }
+            }
+        }
+
+        foreach (var item in cubesToBeSentToDeck)
+        {
+            item.GetComponent<CubeDetails>().MoveToDeck();
+        }
+
+        cubesToBeSentToDeck.Clear();
+        
+        
+    }
 }

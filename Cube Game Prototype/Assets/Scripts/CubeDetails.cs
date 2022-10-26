@@ -23,6 +23,7 @@ public class CubeDetails : MonoBehaviour
         if (Deck.ins.deckhasavailablespace == true && sentToDeck == false)
         {
             Deck.ins.cubesInDeck.Add(gameObject);
+            Deck.ins.AvailableCubesForHint.Remove(gameObject);
             Deck.ins.SortDeckCubes();
             Deck.ins.SortVisualDeck();
             Deck.ins.CheckMatchingCubes();
